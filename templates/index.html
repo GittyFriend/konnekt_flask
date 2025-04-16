@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Konnekt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo-title">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Konnekt Logo" class="logo">
+            <h1>Konnekt</h1>
+        </div>
+        <a href="{{ url_for('new_chat') }}">
+            <button class="new-chat-btn">New Chat</button>
+        </a>
+    </header>
+
+    <div class="container">
+        <div class="sidebar">
+            <h2>Chat History</h2>
+            <div class="history">
+                {% for msg in chat_history %}
+                    <div class="message {{ msg.role|lower }}">
+                        <strong>{{ msg.role }}:</strong> {{ msg.text }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="chat-section">
+            <form method="post" class="input-form" autocomplete="off">
+                <input type="text" name="inputItem" placeholder="Ask me anything." required autofocus>
+                <button type="submit">Send</button>
+            </form>
+
+            {% if response %}
+                <div class="message bot"><strong>Bot:</strong> {{ response }}</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
