@@ -1,14 +1,17 @@
 from flask import Flask, render_template, request, session
 from flask_session import Session
 import google.generativeai as genai
+import os
 
 app = Flask(__name__)
-app.secret_key = "your-secret-key"  # Replace with a secure key
+
+# --- Secret Key & Session ---
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "fallback-secret")
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # --- Configure Gemini API ---
-genai.configure(api_key="AIzaSyC1SmHI0-RI0-4uZbwpkBgzH-PB_4c55Po")
+genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
 # --- Generation Settings ---
 generation_config = {
