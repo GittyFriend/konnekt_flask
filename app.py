@@ -35,8 +35,6 @@ model = genai.GenerativeModel(
     safety_settings=safety_settings
 )
 
-convo = model.start_chat(history=[])
-
 # --- Routes ---
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -47,22 +45,26 @@ def index():
         user_input = request.form.get("inputItem", "")
         if user_input.strip():
             try:
+                # start a new chat for each interaction
+                convo = model.start_chat(history=chat_history)
                 convo.send_message(user_input)
                 response = convo.last.text
+
                 chat_history.append({"role": "User", "text": user_input})
                 chat_history.append({"role": "Bot", "text": response})
                 session["history"] = chat_history
+
             except Exception as e:
                 response = f"Oops! Something went wrong: {str(e)}"
 
     return render_template("index.html", response=response, chat_history=chat_history)
 
+
 @app.route("/new")
 def new_chat():
-    global convo
-    convo = model.start_chat(history=[])
     session["history"] = []
     return render_template("index.html", response="", chat_history=[])
+
 
 # --- Run ---
 if __name__ == "__main__":
