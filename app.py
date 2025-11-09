@@ -11,7 +11,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # --- Configure Gemini API ---
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
 
 # --- Generation Settings ---
 generation_config = {
