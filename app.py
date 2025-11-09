@@ -10,6 +10,9 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "fallback-secret")
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# --- Check if API key is loaded ---
+print("Gemini key loaded:", bool(os.environ.get("GOOGLE_API_KEY")))
+
 # --- Configure Gemini API ---
 genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
 
@@ -45,10 +48,14 @@ def index():
         user_input = request.form.get("inputItem", "")
         if user_input.strip():
             try:
-                # start a new chat for each interaction
+                # Start a new chat with current history
                 convo = model.start_chat(history=chat_history)
                 convo.send_message(user_input)
-                response = convo.last.text
+                response = convo.last.text if convo.last else "No response"
+
+                # Debug prints to logs
+                print("User said:", user_input)
+                print("Gemini replied:", response)
 
                 chat_history.append({"role": "User", "text": user_input})
                 chat_history.append({"role": "Bot", "text": response})
@@ -56,6 +63,7 @@ def index():
 
             except Exception as e:
                 response = f"Oops! Something went wrong: {str(e)}"
+                print("Error:", e)
 
     return render_template("index.html", response=response, chat_history=chat_history)
 
@@ -64,6 +72,11 @@ def index():
 def new_chat():
     session["history"] = []
     return render_template("index.html", response="", chat_history=[])
+
+
+@app.route("/ping")
+def ping():
+    return "pong"
 
 
 # --- Run ---
