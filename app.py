@@ -30,7 +30,7 @@ safety_settings = [
 
 # --- Gemini Model ---
 model = genai.GenerativeModel(
-    model_name="gemini-1.5-pro-latest",
+    model_name="gemini-1.5-pro",
     generation_config=generation_config,
     safety_settings=safety_settings
 )
